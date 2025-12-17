@@ -2,41 +2,80 @@
 clear;
 clc
 
-addpath('../../src')
+addpath('src')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% energies = zeros(201,1);d
-% dists = linspace(1,20,201)';
+% energies = zeros(81,1);
+% dists = linspace(5,13,81)';
 % 
-% for i = 1:201
+% for i = 1:81
 %     dist = dists(i);
 %     S = msparc_1d_chain(dist, 32, 0.01, 10, 'GGA_PBE');
 %     energies(i) = S.Etotal; 
 % end
-
+% 
 % save_array = [dists, energies];
+% 
+% save('1d_32atoms_5:0.1:13dist_GGA_PBE_energies.mat', 'save_array')
 
-% save('1d_32atoms_1:0.1:20dist_GGA_PBE_energies.mat', 'save_array')
+% energies = zeros(41,1);
+% dists = linspace(5,13,41)';
+% 
+% for i = 1:41
+%     dist = dists(i);
+%     S = msparc_1d_chain(dist, 32, 0.1, 10, 'GGA_PBE');
+%     energies(i) = S.Etotal; 
+% end
+% 
+% save_array = [dists, energies];
+% 
+% save('data/1d_32atoms_5:0.2:13dist_kappa0.1_GGA_PBE_energies.mat', 'save_array')
 
-energies = zeros(21,1);
-dists = linspace(1,20,21)';
+% energies = zeros(41,1);
+% dists = linspace(5,13,41)';
+% 
+% for i = 1:41
+%     dist = dists(i);
+%     S = msparc_1d_chain(dist, 32, 0.01, 1, 'GGA_PBE');
+%     energies(i) = S.Etotal; 
+% end
+% 
+% save_array = [dists, energies];
+% 
+% save('data/1d_32atoms_5:0.2:13dist_epsilon1_GGA_PBE_energies.mat', 'save_array')
 
-for i = 1:21
+energies = zeros(41,1);
+dists = linspace(5,13,41)';
+
+for i = 1:41
     dist = dists(i);
-    S = msparc_1d_chain(dist, 32, 0.01, 10, 'GGA_PBE');
+    S = msparc_1d_chain(dist, 32, 0.01, 0.1, 'GGA_PBE');
     energies(i) = S.Etotal; 
 end
 
+save_array = [dists, energies];
 
-plot(dists, energies);
+save('data/1d_32atoms_5:0.2:13dist_epsilon0.1_GGA_PBE_energies.mat', 'save_array')
+
+% energies = zeros(21,1);
+% dists = linspace(1,20,21)';
+% 
+% for i = 1:21
+%     dist = dists(i);
+%     S = msparc_1d_chain(dist, 32, 0.01, 10, 'GGA_PBE');
+%     energies(i) = S.Etotal; 
+% end
+% 
+% 
+% plot(dists, energies);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% energies = zeros(201,1);
-% dists = linspace(1,20,201)';
+% energies = zeros(81,1);
+% dists = linspace(5,13,81)';
 % 
-% for i = 1:201
+% for i = 1:81
 %     dist = dists(i);
 %     S = msparc_1d_chain(dist, 32, 0.01, 10, 'LDA_PW');
 %     energies(i) = S.Etotal; 
@@ -44,14 +83,14 @@ plot(dists, energies);
 % 
 % save_array = [dists, energies];
 % 
-% save('1d_32atoms_1:0.1:20dist_LDA_PW_energies.mat', 'save_array')
+% save('1d_32atoms_5:0.1:13dist_LDA_PW_energies.mat', 'save_array')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% energies = zeros(201,1);
-% dists = linspace(1,20,201)';
+% energies = zeros(81,1);
+% dists = linspace(5,13,81)';
 % 
-% for i = 1:201
+% for i = 1:81
 %     dist = dists(i);
 %     S = msparc_1d_chain(dist, 32, 0.01, 10, 'None');
 %     energies(i) = S.Etotal; 
@@ -59,7 +98,7 @@ plot(dists, energies);
 % 
 % save_array = [dists, energies];
 % 
-% save('1d_32atoms_1:0.1:20dist_NoXC_energies.mat', 'save_array')
+% save('1d_32atoms_5:0.1:13dist_NoXC_energies.mat', 'save_array')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -85,6 +124,6 @@ set(gca, ...
 set(gca, 'YTickLabel', num2str(energies, '%.4f'));
 
 % xlim([min(dists) max(dists)]);
-xlim([6 max(dists)]);
+xlim([5 max(dists)]);
 
 % exportgraphics(f, 'Sigma2.0.pdf', 'Resolution', 300);

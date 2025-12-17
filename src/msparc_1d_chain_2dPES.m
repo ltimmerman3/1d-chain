@@ -1,4 +1,4 @@
-function S = msparc_1d_chain(atm_dist, n_atm, kappa, epsilon, XC)
+function S = msparc_1d_chain_2dPES(r1, r2, vacuum, kappa, epsilon, XC)
 if strcmpi(XC,'None')
     XCswitch = 0; % Enable exchange-correlation functional
     XC = 'GGA_PBE';
@@ -18,15 +18,15 @@ total_time = tic;
 %          Atomic information             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% % Equidistant atoms
-% Atoms = (0:n_atm-1)' *atm_dist; % Column vector of positions [0, a, 2a, ...]
+n_atm = 3;
+% Center one atom for a given lattice size (determined by atm_dist, n_atm
+% and vacuum
+L = 2 * vacuum + r1 + r2;
+N = floor(20 * L); % Number of grid points based on lattice size
+dx = L/N; % grid spacing
 
 % Non-Equidistant atoms - define as you like
-Atoms = (0:n_atm-1)' *atm_dist; % Column vector of positions [0, a, 2a, ...]
-
-% % Force numerical test - perturb any atom
-% S.Atoms(end) = S.Atoms(end) - 0.1;
-% Atoms(end) = Atoms(end) - 0.1;
+Atoms = [vacuum, vacuum+r1, vacuum+r1+r2]'; % Column vector of positions [0, a, 2a, ...]
 
 % Store atomic numbers and b_sigma as a vector - change accordingly
 % S.Z = 2*ones(size(S.Atoms)); 
@@ -53,11 +53,7 @@ n_typ = length(unique_Z);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Basic parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% L = 320; % Lattice size
-L = atm_dist * n_atm;
-% N = 3200; % Number of grid points
-N = floor(10 * L); % Number of grid points based on lattice size
-dx = L/N; % grid spacing
+
 SCF_tol = 1e-6; % SCF tolerance
 
 % FDn: half of finite difference order
@@ -70,7 +66,7 @@ S = struct('L',L,'N',N,'dx',dx,'SCF_tol',SCF_tol,'FDn',FDn,...
 
 % Mixing parameter - Anderson mixing only (no preconditioners)
 % Setting default to 0.5, reduce in case of difficulty
-S.MixingParameter = 0.1;
+S.MixingParameter = 0.7;
 
 % Relax Flag
 S.RelaxFlag = 0;
@@ -109,12 +105,6 @@ end
 S.kappa = kappa;
 % S.epsilon_elec = 10;
 S.epsilon_elec = epsilon;
-
-% % Electronic smearing - specify width
-% S.elec_T_type = 0; % fermi-dirac
-% smearing = 0.1; % eV
-% S.bet = 27.21138602 / smearing; % smearing = 0.1 eV = 0.00367493225 Ha, Beta := 1 / smearing
-% S.Temp = 1./(3.166810501187400e-06 * S.bet);
 
 % Electronic smearing - specify Temp
 % Cst: Factor for conversion from Ha to eV
