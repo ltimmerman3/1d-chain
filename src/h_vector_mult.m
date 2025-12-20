@@ -9,4 +9,9 @@ Hx = Hx - 0.5*Laplacian*X;
 
 % apply Veff
 Hx = Hx + Veff.*X;
+
+% hybrid
+if S.usefock > 1
+    Hx = evaluateExactExchangePotential(S,X,Hx);
+end
 end

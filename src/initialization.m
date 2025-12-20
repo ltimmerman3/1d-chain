@@ -84,6 +84,11 @@ S.pseudocharge_tol = 0.01*S.SCF_tol;
 % Calculate rb
 S = Calculate_rb(S);
 
+% Exact exchange initialization
+if S.usefock == 1
+    S = exx_initialization(S);
+end
+
 end
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

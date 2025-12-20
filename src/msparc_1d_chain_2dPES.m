@@ -78,6 +78,7 @@ S.XCswitch = XCswitch;
 % S.XC = 'GGA_PBE';
 S.XC = XC;
 S.isgradient = 0; % default
+S.usefock = 0;
 % decomposition of XC, ixc = [iexch,icorr imeta ivdw]
 if strcmp(S.XC, 'LDA_PW')
 	S.xc = 0;
@@ -97,6 +98,17 @@ elseif strcmp(S.XC, 'GGA_PBEsol')
 elseif strcmp(S.XC, 'GGA_RPBE')
     S.ixc = [2 3 0 0];
     S.xc_option = [3 3];
+    S.isgradient = 1;
+elseif strcmp(S.XC, 'HSE')
+    if ispc
+        addpath('xc\exx\');
+    else
+        addpath('xc/exx/');
+    end
+    S.xc = 427;
+    S.usefock = 1;
+    S.ixc = [2 3 0 0];
+    S.xc_option = [1 1];
     S.isgradient = 1;
 end
 
