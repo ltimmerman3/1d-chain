@@ -4,11 +4,18 @@
 -changes
 
 --------------
+December 20, 2025
+Name: Sayan Bhowmik
+Changes: xc/exx/, evaluateTotalEnergy.m, exchangeCorrelationPotential.m,
+         h_vector_mult.m, initialization.m, scf.m, msparc_1d_*.m
+1. Add HSE hybrid functional (Yukawa kernel based) - ACE with FFT/real-space helmholtz, non ACE (slow, not optimized).
+
+--------------
 December 16, 2025
 Name: Lucas Timmerman
 Changes:
 1. Add PES_2D for generating a 2D PES
-2. add src/msparc_1d_chain_2dPES to add vacuum and modify spacing etc.
+2. Add src/msparc_1d_chain_2dPES to add vacuum and modify spacing etc.
 
 --------------
 December 15, 2025

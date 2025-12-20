@@ -11,8 +11,8 @@ total_time = tic;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Basic parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-L = 352; % Lattice size
-N = 3520; % Number of grid points
+L = 320; % Lattice size
+N = 3200; % Number of grid points
 dx = L/N; % grid spacing
 SCF_tol = 1e-6; % SCF tolerance
 
@@ -31,8 +31,9 @@ S.Relax_iter = 1;
 
 % XC: Exchange-correlation functional 
 S.XCswitch = 1; % 0 to switch off, 1 to switch on
-S.XC = 'GGA_PBE';
+S.XC = 'HSE';
 S.isgradient = 0; % default
+S.usefock = 0;
 % decomposition of XC, ixc = [iexch,icorr imeta ivdw]
 if strcmp(S.XC, 'LDA_PW')
 	S.xc = 0;
@@ -52,6 +53,17 @@ elseif strcmp(S.XC, 'GGA_PBEsol')
 elseif strcmp(S.XC, 'GGA_RPBE')
     S.ixc = [2 3 0 0];
     S.xc_option = [3 3];
+    S.isgradient = 1;
+elseif strcmp(S.XC, 'HSE')
+    if ispc
+        addpath('xc\exx\');
+    else
+        addpath('xc/exx/');
+    end
+    S.xc = 427;
+    S.usefock = 1;
+    S.ixc = [2 3 0 0];
+    S.xc_option = [1 1];
     S.isgradient = 1;
 end
 
@@ -83,7 +95,7 @@ S.bet = 1 / (S.kB*S.Temp);
 % S.Atoms = (0:S.n_atm-1)' * atm_dist; % Column vector of positions [0, a, 2a, ...]
 
 % Non-Equidistant atoms - define as you like
-atm_dist = 11; % interatomic distance, user specified
+atm_dist = 10; % interatomic distance, user specified
 S.n_atm = 28;
 S.Atoms = (0:S.n_atm-1)' * atm_dist; % Column vector of positions [0, a, 2a, ...]
 

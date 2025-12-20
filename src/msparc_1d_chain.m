@@ -19,10 +19,18 @@ total_time = tic;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % % Equidistant atoms
-% Atoms = (0:n_atm-1)' *atm_dist; % Column vector of positions [0, a, 2a, ...]
+% atm_dist = 10; % interatomic distance, user specified
+% S.n_atm = floor(S.L/atm_dist);
+Atoms = (0:n_atm-1)' *atm_dist;
+% S.Atoms = (0:S.n_atm-1)' * atm_dist; % Column vector of positions [0, a, 2a, ...]
 
 % Non-Equidistant atoms - define as you like
-Atoms = (0:n_atm-1)' *atm_dist; % Column vector of positions [0, a, 2a, ...]
+% atm_dist = 10; % interatomic distance, user specified
+% n_atm = 28;
+% S.n_atm = 16;
+% S.n_atm = n_atm;
+% Atoms = (0:n_atm-1)' *atm_dist;
+% S.Atoms = (0:S.n_atm-1)' * atm_dist; % Column vector of positions [0, a, 2a, ...]
 
 % % Force numerical test - perturb any atom
 % S.Atoms(end) = S.Atoms(end) - 0.1;
@@ -32,7 +40,7 @@ Atoms = (0:n_atm-1)' *atm_dist; % Column vector of positions [0, a, 2a, ...]
 % S.Z = 2*ones(size(S.Atoms)); 
 Z = 2*ones(size(Atoms));
 %S.b_sigma = 2*ones(size(S.Atoms)); % sigma of pseudocharge gaussian in Lin Lin paper
-b_sigma = 1*ones(size(Atoms)); % sigma of pseudocharge gaussian
+b_sigma = 2*ones(size(Atoms)); % sigma of pseudocharge gaussian
 
 % S.Nelectron = sum(S.Z);
 Nelectron = sum(Z); % Total number of electrons
@@ -70,7 +78,7 @@ S = struct('L',L,'N',N,'dx',dx,'SCF_tol',SCF_tol,'FDn',FDn,...
 
 % Mixing parameter - Anderson mixing only (no preconditioners)
 % Setting default to 0.5, reduce in case of difficulty
-S.MixingParameter = 0.1;
+S.MixingParameter = 0.5;
 
 % Relax Flag
 S.RelaxFlag = 0;
@@ -82,6 +90,7 @@ S.XCswitch = XCswitch;
 % S.XC = 'GGA_PBE';
 S.XC = XC;
 S.isgradient = 0; % default
+S.usefock = 0;
 % decomposition of XC, ixc = [iexch,icorr imeta ivdw]
 if strcmp(S.XC, 'LDA_PW')
 	S.xc = 0;
@@ -101,6 +110,17 @@ elseif strcmp(S.XC, 'GGA_PBEsol')
 elseif strcmp(S.XC, 'GGA_RPBE')
     S.ixc = [2 3 0 0];
     S.xc_option = [3 3];
+    S.isgradient = 1;
+elseif strcmp(S.XC, 'HSE')
+    if ispc
+        addpath('xc\exx\');
+    else
+        addpath('xc/exx/');
+    end
+    S.xc = 427;
+    S.usefock = 1;
+    S.ixc = [2 3 0 0];
+    S.xc_option = [1 1];
     S.isgradient = 1;
 end
 

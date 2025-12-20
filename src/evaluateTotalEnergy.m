@@ -32,7 +32,11 @@ for spin = 1:S.nspin
 end
 
 % Total free energy
-Etot = Eband + Exc - Exc_dc + Eelec_dc + Eent - S.Eself;
+if S.usefock < 2
+    Etot = Eband + Exc - Exc_dc + Eelec_dc + Eent - S.Eself;
+else
+    Etot = Eband + Exc - Exc_dc + Eelec_dc + Eent - S.Eself - S.Eex;
+end
 
 fprintf(2,' ------------------\n');
 fprintf(' Eband = %.8f\n', Eband);
@@ -42,6 +46,9 @@ fprintf(' Eelec_dc = %.8f\n', Eelec_dc);
 fprintf(' Eent = %.8f\n', Eent);
 % fprintf(' E_corr = %.8f\n', S.E_corr);
 fprintf(' Eself = %.8f\n', S.Eself);
+if S.usefock > 1
+    fprintf(' Eex = %.8f\n', S.Eex);
+end
 fprintf(' Etot = %.8f\n', Etot);
 fprintf(2,' ------------------\n');
 end
