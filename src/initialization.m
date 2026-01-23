@@ -123,9 +123,11 @@ W_temp(1) = W_temp(1)*0.5; W_temp(Nx) = W_temp(Nx)*0.5;
 % Pseudopotential (local), evaluated as solution to integral in https://arxiv.org/pdf/1206.2225 eq 6.2
 % figure
 % hold on
-VJ_mat = zeros(S.N,S.n_typ);
+Vj_N = floor(20 * rb_up_x);
+Vj_x = (0:Vj_N-1)' * S.dx;  % Grid vector
+VJ_mat = zeros(Vj_N,S.n_typ);
 for i = 1 : S.n_typ
-    VJ_mat(:,i) = calculate_VJ(S.x,S,i);
+    VJ_mat(:,i) = calculate_VJ(Vj_x,S,i);
     % plot(S.x, VJ_mat(:,i))
 end
 % legend('Atom 1', 'Atom 2')
@@ -142,12 +144,12 @@ for ityp = 1:S.n_typ
     % Pseudopotential at grid points from negative to positive rb_x
     % max/min. This is likely an issue if the potential hasn't decayed to 0
     % within the box
-    V_PS = interp1(S.x,VJ_mat(:,ityp),abs(dd_temp),'spline');
+    V_PS = interp1(Vj_x,VJ_mat(:,ityp),abs(dd_temp),'spline');
     % if ityp == 1
     %     figure
     %     hold on
     %     plot(abs(dd_temp), V_PS)
-    %     plot(S.x, VJ_mat(:,ityp))
+    %     plot(Vj_x, VJ_mat(:,ityp))
     %     legend('Interpolated', 'Raw')
     %     hold off
     % end

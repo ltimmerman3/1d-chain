@@ -1,5 +1,5 @@
 %--------------------------------------------------------------------------
-% Numerical b
+% Numerical b Solves for m(x) that arises from Potential
 %--------------------------------------------------------------------------
 function b = pseudochargeDensity_atom(V,II,S)
 % Calculate [epsilon/(4pi)] [-lap * V + k^2 * V] = b (in this function)

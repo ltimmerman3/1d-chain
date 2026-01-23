@@ -1,18 +1,26 @@
 %% Generate data
 clear;
-% clc
+clc
 
 addpath('src')
 
 ang_to_bohr = 1.88973;
 
-r1 = 4.0 * ang_to_bohr;
-box = 8.0 * ang_to_bohr;
+Z_in = 1;
+sigma_in = 2.784;
+kappa = 0.01;
+epsilon = 1.;
+
+lattice = 11.75;
+dist = lattice / 2;
+S = msparc_1d_chain_paramOpt(dist, lattice, Z_in, sigma_in, kappa, epsilon, 2, 'GGA_PBE');
+energy = S.Etotal;
+
 % box = 128 * ang_to_bohr;
 
 % S = msparc_1d_chain(4., -1, 128, 0.01, 10, 'HSE');
 
-S = msparc_1d_chain(r1, -1, box, 0.01, 10, 'HSE');
+% S = msparc_1d_chain(r1, -1, box, 0.01, 10, 'GGA_PBE');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

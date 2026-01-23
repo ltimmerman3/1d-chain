@@ -1,4 +1,4 @@
-function S = msparc_1d_chain(atm_dist, n_atm, kappa, epsilon, XC)
+function S = msparc_1d_chain(r1, r2, box_size, kappa, epsilon, XC)
 if strcmpi(XC,'None')
     XCswitch = 0; % Enable exchange-correlation functional
     XC = 'GGA_PBE';
@@ -18,29 +18,50 @@ total_time = tic;
 %          Atomic information             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% % Equidistant atoms
-% atm_dist = 10; % interatomic distance, user specified
-% S.n_atm = floor(S.L/atm_dist);
-Atoms = (0:n_atm-1)' *atm_dist;
-% S.Atoms = (0:S.n_atm-1)' * atm_dist; % Column vector of positions [0, a, 2a, ...]
-
-% Non-Equidistant atoms - define as you like
-% atm_dist = 10; % interatomic distance, user specified
-% n_atm = 28;
-% S.n_atm = 16;
-% S.n_atm = n_atm;
+% Equidistant atoms
 % Atoms = (0:n_atm-1)' *atm_dist;
-% S.Atoms = (0:S.n_atm-1)' * atm_dist; % Column vector of positions [0, a, 2a, ...]
 
-% % Force numerical test - perturb any atom
-% S.Atoms(end) = S.Atoms(end) - 0.1;
-% Atoms(end) = Atoms(end) - 0.1;
+% Center atoms
+% center_atom = box_size/2;
+% left_atom = center_atom - r1;
+% right_atom = center_atom + r2;
+
+% Atom tied to edge of box
+% left_atom = 0.;
+% center_atom = r1;
+% right_atom = r1+r2;
+% Atoms = [left_atom, center_atom, right_atom]';
+
+% Single atom cell
+% n_atm = 1;
+% Atoms = 0.0;
+
+% Single Li-H bond length or 2
+% n_atm = 2;
+% Atoms = [0.0; r1];
+
+% Get bandgaps for 32 atm system
+n_atm = 2;
+if r2 < 0
+    Atoms = (0:n_atm-1)' * r1;
+else
+    Atoms = zeros(n_atm, 1); % Initialize Atoms array
+    Atoms(1) = 0.0;
+    for i = 2:n_atm
+        if mod(i,2) == 0
+            Atoms(i) = Atoms(i-1) + r1;
+        else
+            Atoms(i) = Atoms(i-1) + r2;
+        end
+    end
+end
 
 % Store atomic numbers and b_sigma as a vector - change accordingly
-% S.Z = 2*ones(size(S.Atoms)); 
-Z = 2*ones(size(Atoms));
-%S.b_sigma = 2*ones(size(S.Atoms)); % sigma of pseudocharge gaussian in Lin Lin paper
-b_sigma = 2*ones(size(Atoms)); % sigma of pseudocharge gaussian
+Z = 1*ones(size(Atoms));
+Z(2:2:end) = 2;
+b_sigma = 2.784*ones(size(Atoms)); % sigma of pseudocharge gaussian
+b_sigma(2:2:end) = 1.241;
+%b_sigma(2:2:end) = 1.178;
 
 % S.Nelectron = sum(S.Z);
 Nelectron = sum(Z); % Total number of electrons
@@ -62,9 +83,10 @@ n_typ = length(unique_Z);
 % Basic parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % L = 320; % Lattice size
-L = atm_dist * n_atm;
+% L = atm_dist * n_atm;
+L = box_size;
 % N = 3200; % Number of grid points
-N = floor(10 * L); % Number of grid points based on lattice size
+N = floor(20 * L); % Number of grid points based on lattice size
 dx = L/N; % grid spacing
 SCF_tol = 1e-6; % SCF tolerance
 
@@ -78,7 +100,7 @@ S = struct('L',L,'N',N,'dx',dx,'SCF_tol',SCF_tol,'FDn',FDn,...
 
 % Mixing parameter - Anderson mixing only (no preconditioners)
 % Setting default to 0.5, reduce in case of difficulty
-S.MixingParameter = 0.5;
+S.MixingParameter = 0.1;
 
 % Relax Flag
 S.RelaxFlag = 0;
@@ -112,11 +134,7 @@ elseif strcmp(S.XC, 'GGA_RPBE')
     S.xc_option = [3 3];
     S.isgradient = 1;
 elseif strcmp(S.XC, 'HSE')
-    if ispc
-        addpath('xc\exx\');
-    else
-        addpath('xc/exx/');
-    end
+    addpath('../../src/xc/exx/');
     S.xc = 427;
     S.usefock = 1;
     S.ixc = [2 3 0 0];
@@ -147,6 +165,7 @@ S.bet = 1 / (S.kB*S.Temp);
 % Initialize remaining parameters
 S = initialization(S);
 
+% return
 % Perform relaxation/single point calculation
 if S.RelaxFlag 
     error(" Relaxation not implemented.\n");

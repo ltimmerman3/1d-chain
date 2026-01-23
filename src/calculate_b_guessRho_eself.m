@@ -7,9 +7,11 @@ S.b = zeros(S.N,1);
 S.Eself = 0;
 
 % Pseudopotential (local)
-VJ_mat = zeros(S.N,S.n_typ);
+Vj_N = floor(20 * max(S.rb_x));
+Vj_x = (0:Vj_N-1)' * S.dx;  % Grid vector
+VJ_mat = zeros(Vj_N,S.n_typ);
 for i = 1 : S.n_typ
-    VJ_mat(:,i) = calculate_VJ(S.x,S,i);
+    VJ_mat(:,i) = calculate_VJ(Vj_x,S,i);
 end
 
 %--------------------------------------------------------------------------
@@ -55,7 +57,7 @@ for JJ_a = 1:S.n_atm
 
         % Pseudopotential at grid points through interpolation
         % idx_type = find(S.unique_Z == S.Z(JJ_a));
-        V_PS = interp1(S.x,VJ_mat(:,idx_type),abs(dd),'spline');
+        V_PS = interp1(Vj_x,VJ_mat(:,idx_type),abs(dd),'spline');
 
         % Pseudocharge density calculation - numerical bJ
         II = 1+S.FDn : size(dd,1)-S.FDn;
